@@ -19,6 +19,7 @@ mongoose
   });
 
 // Routes
+const userRoutes = require("./routes/userRoutes");
 const videoUploadRoute = require("./routes/uploadVideo");
 const uploadRoute = require("./routes/uploads");
 const auth = require("./routes/auth");
@@ -26,6 +27,7 @@ const auth = require("./routes/auth");
 app.use("/api", videoUploadRoute);
 app.use("/api", uploadRoute);
 app.use("/api", auth);
+app.use("api",userRoutes);
 
 // Test route
 app.get("/", (req, res) => {
