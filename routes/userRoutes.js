@@ -58,6 +58,35 @@ router.get('/userfilter', async (req, res) => {
   }
 });
 
+router.get('/user/:id', async (req, res) => {
+  try {
+    const userId = req.params.id;
+
+    // Validate ID format if needed (optional)
+    if (!userId || userId.length !== 24) {
+      return res.status(400).json({ msg: "Invalid user ID format" });
+    }
+
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ msg: "User not found" });
+    }
+
+    // Respond with user data (omit password)
+    res.json({
+      _id: user._id,
+      name: user.name,
+      email: user.email
+    });
+
+  } catch (err) {
+    console.error("Error fetching user by ID:", err);
+    res.status(500).json({ msg: "Server error" });
+  }
+});
+
+
 
 
 module.exports = router;
