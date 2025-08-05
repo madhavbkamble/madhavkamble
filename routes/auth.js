@@ -40,26 +40,41 @@ router.post("/register", async (req, res) => {
 });
 
 // Login route
+// Login route
 router.post("/login", async (req, res) => {
-  const { email, password } = req.body;
+  try {
+    const { email, password } = req.body;
 
-const user = await User.findOne({ email });
-  if (!user) {
-    return res.status(400).json({ msg: "User not found" });
+    // Validate input
+    if (!email || !password) {
+      return res.status(400).json({ msg: "Email and password are required" });
+    }
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(400).json({ msg: "User not found" });
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(400).json({ msg: "Invalid credentials" });
+    }
+
+    res.json({
+      msg: "Login successful",
+      user: {
+        _id: user._id,
+        name: user.name,
+        email: user.email
+        // Do NOT return password here
+      },
+    });
+
+  } catch (error) {
+    console.error("Login Error:", error);
+    res.status(500).json({ msg: "Server error" });
   }
-
-  const isMatch = await bcrypt.compare(password, user.password);
-  if (!isMatch) {
-    return res.status(400).json({ msg: "Invalid credentials" });
-  }
-
-  res.json({ msg: "Login successful",
-           user:{
-             _id:user._id,
-             name:user.name,
-             email:user.email,
-             password:user.password
-           });
 });
+
 
 module.exports = router;
