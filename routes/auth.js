@@ -53,7 +53,13 @@ const user = await User.findOne({ email });
     return res.status(400).json({ msg: "Invalid credentials" });
   }
 
-  res.json({ msg: "Login successful" });
+  res.json({ msg: "Login successful",
+           user:{
+             _id:user._id,
+             name:user.name,
+             email:user.email,
+             password:user.password
+           });
 });
 
 module.exports = router;
